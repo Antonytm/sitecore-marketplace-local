@@ -1,0 +1,7 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# Vite needs esbuild's postinstall to fetch its platform binary.
+onlyBuiltDependencies:
+  - esbuild

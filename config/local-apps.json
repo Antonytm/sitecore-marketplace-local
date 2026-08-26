@@ -1,0 +1,30 @@
+{
+  "hostOrigin": "http://localhost:5173",
+  "gatewayUrl": "http://localhost:8787",
+  "apps": [
+    {
+      "id": "local-starter-app",
+      "name": "Marketplace Starter",
+      "origin": "http://localhost:3000",
+      "routes": {
+        "standalone": "/standalone-extension",
+        "xmc:fullscreen": "/fullscreen-extension",
+        "xmc:pages:contextpanel": "/pages-contextpanel-extension",
+        "xmc:pages:customfield": "/custom-field-extension",
+        "xmc:dashboardblocks": "/dashboard-widget-extension"
+      }
+    },
+    {
+      "id": "local-probe-app",
+      "name": "Protocol Probe",
+      "origin": "http://localhost:3001",
+      "routes": {
+        "standalone": "/?hostOrigin=http://localhost:5173",
+        "xmc:fullscreen": "/?hostOrigin=http://localhost:5173",
+        "xmc:pages:contextpanel": "/?hostOrigin=http://localhost:5173",
+        "xmc:pages:customfield": "/?hostOrigin=http://localhost:5173",
+        "xmc:dashboardblocks": "/?hostOrigin=http://localhost:5173"
+      }
+    }
+  ]
+}

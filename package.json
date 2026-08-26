@@ -1,0 +1,21 @@
+{
+  "name": "sitecore-marketplace-local",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A local Sitecore Marketplace host: run Marketplace apps against a local SitecoreAI/XM Cloud instance.",
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./apps/host\" --filter \"./packages/gateway\" dev",
+    "dev:all": "pnpm --parallel -r dev",
+    "dev:host": "pnpm --filter @sml/host dev",
+    "dev:probe": "pnpm --filter @sml/probe dev",
+    "dev:gateway": "pnpm --filter @sml/gateway dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm --filter @sml/protocol test",
+    "probe:endpoints": "pnpm --filter @sml/gateway probe"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "pnpm@10.12.1"
+}

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.next/
+*.log
+.env
+.env.local
+.DS_Store
+*.tsbuildinfo
+.secrets/
+# Sitecore CLI writes a bearer token here; the gateway reads it but it must
+# never be committed.
+.sitecore/user.json
