@@ -2,7 +2,7 @@
   "name": "sitecore-marketplace-local",
   "version": "0.1.0",
   "private": true,
-  "description": "A local Sitecore Marketplace host: run Marketplace apps against a local SitecoreAI/XM Cloud instance.",
+  "description": "A local Sitecore Marketplace host: run Marketplace apps against a local SitecoreAI (XM Cloud) instance.",
   "scripts": {
     "dev": "pnpm --filter slm dev",
     "dev:starter": "npm --prefix apps/marketplace-starter run dev",

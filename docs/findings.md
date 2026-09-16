@@ -1,7 +1,7 @@
 # Can Sitecore Marketplace run against a local SitecoreAI instance?
 
 **Yes — mostly.** You can run Marketplace apps entirely on localhost, at every extension
-point, against a local SitecoreAI/XM Cloud Docker instance. It does not require patching or
+point, against a local SitecoreAI (XM Cloud) Docker instance. It does not require patching or
 forking the SDK. What you cannot reproduce locally is the set of cloud-only backends the
 Marketplace host proxies to, and the Marketplace registry itself.
 

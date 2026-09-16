@@ -1,7 +1,7 @@
 # sitecore-marketplace-local
 
 A **local Sitecore Marketplace host**. Runs Marketplace apps on localhost, at every extension
-point, against a local SitecoreAI/XM Cloud Docker instance instead of a cloud tenant.
+point, against a local SitecoreAI (XM Cloud) Docker instance instead of a cloud tenant.
 
 **Setting up? Follow [`docs/setup.md`](docs/setup.md)** — containers, app, Authoring API, in order.
 
