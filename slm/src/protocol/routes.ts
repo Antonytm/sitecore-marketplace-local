@@ -45,9 +45,9 @@ export function buildRouteTable(cm: string = DEFAULT_LOCAL_CM): RouteRule[] {
       prefix: '/v1/authoring/graphql',
       target: `${cm}/sitecore/api/authoring/graphql/v1`,
       status: 'local',
-      verified: false,
+      verified: true,
       note:
-        'Authoring & Management GraphQL. Present on the local CM. Mutations need ' +
+        'Authoring & Management GraphQL. Present on the local CM (probed: 200). Mutations need ' +
         'Sitecore_GraphQL_Authoring_Mutations enabled in docker-compose.override.yml.',
     },
     {
@@ -55,7 +55,7 @@ export function buildRouteTable(cm: string = DEFAULT_LOCAL_CM): RouteRule[] {
       prefix: '/content/api/graphql/v1',
       target: `${cm}/sitecore/api/graph/edge`,
       status: 'degraded',
-      verified: false,
+      verified: true,
       note:
         'Preview AND Delivery both land here. `xmc.preview.graphql` and ' +
         '`xmc.live.graphql` are literally the same generated function with the ' +
@@ -70,21 +70,24 @@ export function buildRouteTable(cm: string = DEFAULT_LOCAL_CM): RouteRule[] {
     {
       namespaces: ['xmc.xmapp', 'xmc.sites', 'xmc.pages'],
       prefix: '/authoring/api/v1',
-      target: `${cm}/api/v1`,
-      status: 'local',
-      verified: false,
+      target: null,
+      status: 'unavailable',
+      verified: true,
       note:
-        'XM Apps API (sites, pages, collections, languages, jobs). BIGGEST ' +
-        'UNKNOWN: confirm the local CM container serves these. Pages in ' +
-        'local-XM mode calls them, which is the reason to expect they exist.',
+        'XM Apps API (sites, pages, collections, languages, jobs). Probed against ' +
+        'a running stack: 404 on every path, using the same token that got 200 ' +
+        'from authoring GraphQL - so absent, not unauthorised. Refused here so an ' +
+        'app gets a clean 501 instead of a puzzling 404 from the CM.',
     },
     {
       namespaces: ['xmc.contentTransfer'],
       prefix: '/authoring/transfer',
-      target: `${cm}/authoring/transfer`,
-      status: 'degraded',
-      verified: false,
-      note: 'Content transfer targets cloud environments; unlikely to be meaningful locally.',
+      target: null,
+      status: 'unavailable',
+      verified: true,
+      note:
+        'Content transfer targets cloud environments, and is not served locally ' +
+        'either (probed: 404).',
     },
     {
       namespaces: ['xmc.search'],
