@@ -21,18 +21,6 @@
         "standalone": "/",
         "xmc:fullscreen": "/"
       }
-    },
-    {
-      "id": "local-icon-picker",
-      "name": "Icon Picker",
-      "origin": "http://localhost:5174",
-      "routes": {
-        "standalone": "/",
-        "xmc:fullscreen": "/",
-        "xmc:pages:contextpanel": "/",
-        "xmc:pages:customfield": "/",
-        "xmc:dashboardblocks": "/"
-      }
     }
   ]
 }
