@@ -1,0 +1,17 @@
+diff --git a/src/ide/src/utils/hooks/useMarketplaceClient.ts b/src/ide/src/utils/hooks/useMarketplaceClient.ts
+index 943f90f..28211be 100644
+--- a/src/ide/src/utils/hooks/useMarketplaceClient.ts
++++ b/src/ide/src/utils/hooks/useMarketplaceClient.ts
+@@ -46,7 +46,11 @@ async function getMarketplaceClient() {
+ 
+   const config = {
+     target: window.parent,
+-     modules: [XMC],
++    // Without `origin` the SDK only trusts *.sitecorecloud.io and silently
++    // ignores a localhost host. Unset in Cloud Portal, so the same build works
++    // there unchanged.
++    origin: process.env.NEXT_PUBLIC_MP_HOST_ORIGIN,
++    modules: [XMC],
+   };
+ 
+   client = await ClientSDK.init(config);

@@ -13,3 +13,6 @@ sitecore/.sitecore/user.json
 # Sitecore CLI plugin cache, and the mkcert binary init.ps1 downloads.
 sitecore/.sitecore/package-cache/
 sitecore/docker/traefik/certs/mkcert.exe
+# Sitecore CLI serialization index cache. Regenerates on every `ser push`, and
+# caches absolute paths, so it is worse than useless in version control.
+.scindex

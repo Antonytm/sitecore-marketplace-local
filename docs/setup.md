@@ -111,17 +111,24 @@ A Marketplace app must pass `origin` to `ClientSDK.init`, or the SDK only trusts
 no useful error. Reading it from an env var means the same code still deploys to Cloud Portal
 unchanged, where the variable is unset.
 
-The starter does not do this out of the box, and it is a submodule, so the change ships as a
-patch rather than a committed edit:
+**Neither bundled app does this out of the box** — SJE is forked from the starter and carries
+the same unpatched `ClientSDK.init`. Both are submodules, so the change ships as a patch file
+rather than a committed edit, keeping the submodules clean:
 
 ```bash
 cd apps/marketplace-starter
 git apply ../marketplace-starter.patch
 echo "NEXT_PUBLIC_MP_HOST_ORIGIN=http://localhost:5173" > .env.local
 npm install
+
+cd ../SJE
+git apply ../SJE.patch
+cd src/ide
+echo "NEXT_PUBLIC_MP_HOST_ORIGIN=http://localhost:5173" > .env.local
+npm install
 ```
 
-The patch adds one line to `src/utils/hooks/useMarketplaceClient.ts`:
+Each patch adds one line to that app's `src/utils/hooks/useMarketplaceClient.ts`:
 
 ```ts
 const config = {
@@ -131,11 +138,8 @@ const config = {
 };
 ```
 
-For SJE, install from its app folder and set the same variable in `apps/SJE/src/ide/.env.local`:
-
-```bash
-cd apps/SJE/src/ide && npm install
-```
+Two path traps worth naming: SJE's app is in `src/ide/`, so install and run from there — but
+`git apply` runs from the submodule *root*, because the patch paths are relative to it.
 
 ### 2.4 Run and verify
 

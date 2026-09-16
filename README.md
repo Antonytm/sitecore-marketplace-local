@@ -18,6 +18,9 @@ pnpm test                        # verify the protocol contract against the real
 pnpm dev                         # host on :5173
 ```
 
+Then start an app in a second terminal — `pnpm dev:starter` or `pnpm dev:sje`, after the
+one-time setup in [The apps](#the-apps).
+
 Open <http://localhost:5173>, pick an app and an extension point.
 
 No Docker is needed for any of the above — context queries are served from fixtures. Docker is
@@ -50,9 +53,50 @@ the allowlist is skipped. Drop the line and the same build works in Cloud Portal
 For `apps/marketplace-starter` this change ships as a patch, because the submodule should stay
 clean — see [`docs/setup.md`](docs/setup.md) step 2.
 
+## The apps
+
+Two Marketplace apps ship with this repo as git submodules, already registered in
+`slm/apps.json`:
+
+| App | What | Port | Start |
+|---|---|---|---|
+| **Marketplace Starter** | Sitecore's official starter. Demonstrates all five extension points, one route each. | `3000` | `pnpm dev:starter` |
+| **Sitecore JavaScript Extensions** (SJE) | A web-based alternative to Sitecore PowerShell Extensions — a Monaco editor that runs scripts against ~127 helper methods over the Sitecore APIs. [Hackathon 2026 entry](https://exdst.com/posts/20260310-sitecore-hackathon-2026/). Standalone and fullscreen only. | `3002` | `pnpm dev:sje` |
+
+Different ports on purpose: both default to `:3000`, so SJE is moved to `:3002` and
+`slm/apps.json` registers it there.
+
+### One-time setup
+
+Neither app passes `origin` to `ClientSDK.init`, so neither will hand-shake with a localhost
+host until it is patched — see [The one change your app needs](#the-one-change-your-app-needs).
+Both are submodules, so the change ships as a patch file rather than a committed edit, keeping
+the submodules clean:
+
+```bash
+git submodule update --init
+
+cd apps/marketplace-starter
+git apply ../marketplace-starter.patch
+echo "NEXT_PUBLIC_MP_HOST_ORIGIN=http://localhost:5173" > .env.local
+npm install
+
+cd ../SJE
+git apply ../SJE.patch
+cd src/ide
+echo "NEXT_PUBLIC_MP_HOST_ORIGIN=http://localhost:5173" > .env.local
+npm install
+```
+
+Note SJE's app lives in `src/ide/`, not at its submodule root — install and run it from there.
+`git apply`, though, runs from the submodule root, because the patch paths are relative to it.
+
+If an app sits at **`waiting for handshake…`** forever, this setup is almost always why. Open
+devtools on the *iframe* and look for `[client SDK] Invalid message origin`.
+
 ## Registering an app
 
-Add it to `slm/apps.json`:
+Add your own to `slm/apps.json`:
 
 ```json
 {
