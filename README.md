@@ -197,6 +197,3 @@ Environment variables, read by `pnpm dev` and `pnpm probe:endpoints`:
 - **The context fixtures are reconstructions.** `slm/src/protocol/fixtures.ts` is built from the
   SDK's TypeScript interfaces, most of which end in `[key: string]: any`. The real host almost
   certainly sends more.
-- **The SDK is pre-1.0.** The origin allowlist, the `:query` suffix convention and the
-  `host.request` payload are unversioned internals. Versions are pinned exactly; `pnpm test`
-  fails loudly if any of them move.
