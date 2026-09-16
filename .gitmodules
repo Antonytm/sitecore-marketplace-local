@@ -1,0 +1,6 @@
+[submodule "apps/marketplace-starter"]
+	path = apps/marketplace-starter
+	url = https://github.com/Sitecore/marketplace-starter
+[submodule "apps/SJE"]
+	path = apps/SJE
+	url = https://github.com/Sitecore-Hackathon/2026-Ererenderingdering

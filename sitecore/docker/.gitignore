@@ -1,0 +1,13 @@
+/data/cm/*
+!/data/cm/.gitkeep
+/data/cd/*
+!/data/cd/.gitkeep
+/data/sql/*
+!/data/sql/.gitkeep
+/data/solr/*
+!/data/solr/.gitkeep
+
+/deploy/platform/*
+!/deploy/platform/.gitkeep
+# Config patches this repo ships, e.g. CORS for the local Marketplace host.
+!/deploy/platform/App_Config/

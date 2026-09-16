@@ -9,7 +9,7 @@ dist/
 .secrets/
 # Sitecore CLI writes a bearer token here; the host's dev server reads it but it must
 # never be committed.
-.sitecore/user.json
+sitecore/.sitecore/user.json
 # Sitecore CLI plugin cache, and the mkcert binary init.ps1 downloads.
-.sitecore/package-cache/
-local-containers/docker/traefik/certs/mkcert.exe
+sitecore/.sitecore/package-cache/
+sitecore/docker/traefik/certs/mkcert.exe

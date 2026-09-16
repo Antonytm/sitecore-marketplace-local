@@ -32,7 +32,7 @@ The interesting layer is the host. And the host is not proprietary.
 
 `@sitecore-marketplace-sdk/core` is Apache-2.0 and its `PostMessageBridge` / `HandshakeManager`
 implement `type: 'host'` in full — `onRequest`, `emit`, `setTarget`, handshake buffering. Cloud
-Portal is one consumer of that code. `apps/host` in this repo is a second one. No wire format
+Portal is one consumer of that code. `slm` in this repo is a second one. No wire format
 was reimplemented here; the shipped bridge is driven directly.
 
 ### 2.2 The origin allowlist has a supported escape hatch
@@ -105,13 +105,13 @@ Events the host emits — subscriptions listen on the **bare key**, no suffix: `
 `pages.context`, `host.route`, `pages.content.layoutUpdated`, `pages.content.fieldsUpdated`.
 
 The bridge also falls back from `foo:query` to a handler registered as `foo`, and supports a
-`'*'` catch-all. `apps/host` registers the catch-all so an unrecognised action fails loudly
+`'*'` catch-all. `slm` registers the catch-all so an unrecognised action fails loudly
 instead of silently.
 
 ## 4. Gap matrix — what survives the move to local
 
 Derived from the `baseUrl` of each generated client in `@sitecore-marketplace-sdk/xmc@0.4.2`.
-The route table lives in `packages/protocol/src/routes.ts`.
+The route table lives in `slm/src/protocol/routes.ts`.
 
 | Namespace | Path the client sends | Local target | Verdict |
 |---|---|---|---|
@@ -178,8 +178,8 @@ Authentication turns out to be easier than expected. The foundation-head contain
 auth to Auth0 at `auth.sitecorecloud.io` (`SITECORE_FedAuth_dot_Auth0_dot_*` in the stack's
 `.env`), so a **cloud-issued token is accepted by the local instance**. `up.ps1` already does
 the work — `dotnet sitecore cloud login` followed by `dotnet sitecore connect --cm
-https://xmcloudcm.localhost --allow-write true` — leaving a usable token in `.sitecore/user.json`
-that the host's dev server picks up automatically.
+https://xmcloudcm.localhost --allow-write true` — leaving a usable token in
+`sitecore/.sitecore/user.json` that the host's dev server picks up automatically.
 
 **Not worth attempting:** reproducing Search, the AI agent APIs, Experience Edge, or the
 Marketplace registry. Stub them and let apps fail with a clean 501.
@@ -202,4 +202,4 @@ fails loudly if any of them move.
 | Path prefixes per `xmc` namespace | ✅ read from the published `client.gen.ts` files |
 | Local CM serves authoring GraphQL / edge preview | ⚠️ documented by Sitecore; not yet probed here |
 | Local CM serves the XM Apps API | ❓ **unverified** — run `pnpm probe:endpoints` |
-| Context object shapes | ⚠️ reconstructed from types; run `apps/probe` in Cloud Portal for ground truth |
+| Context object shapes | ⚠️ reconstructed from types; capture what Cloud Portal really sends for ground truth |

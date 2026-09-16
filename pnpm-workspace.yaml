@@ -1,6 +1,7 @@
 packages:
-  - 'apps/*'
-  - 'packages/*'
+  - 'slm'
+# Deliberately NOT 'apps/*': those are git submodules with their own npm
+# lockfiles, and pnpm must not adopt them into this workspace.
 
 # Vite needs esbuild's postinstall to fetch its platform binary.
 onlyBuiltDependencies:

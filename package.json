@@ -4,17 +4,16 @@
   "private": true,
   "description": "A local Sitecore Marketplace host: run Marketplace apps against a local SitecoreAI/XM Cloud instance.",
   "scripts": {
-    "dev": "pnpm --filter @sml/host dev",
-    "dev:all": "pnpm --parallel -r dev",
-    "dev:host": "pnpm --filter @sml/host dev",
-    "dev:probe": "pnpm --filter @sml/probe dev",
-    "build": "pnpm -r build",
-    "typecheck": "pnpm -r typecheck",
-    "test": "pnpm --filter @sml/protocol test",
-    "probe:endpoints": "pnpm --filter @sml/gateway probe",
-    "sitecore:up": "powershell -NoProfile -ExecutionPolicy Bypass -File local-containers/scripts/up.ps1",
-    "sitecore:down": "powershell -NoProfile -ExecutionPolicy Bypass -File local-containers/scripts/down.ps1",
-    "sitecore:logs": "cd local-containers && docker compose logs -f cm"
+    "dev": "pnpm --filter slm dev",
+    "dev:starter": "npm --prefix apps/marketplace-starter run dev",
+    "dev:sje": "npm --prefix apps/SJE/src/ide run dev -- --port 3002",
+    "build": "pnpm --filter slm build",
+    "typecheck": "pnpm --filter slm typecheck",
+    "test": "pnpm --filter slm test",
+    "probe:endpoints": "pnpm --filter slm probe",
+    "sitecore:up": "powershell -NoProfile -ExecutionPolicy Bypass -File sitecore/scripts/up.ps1",
+    "sitecore:down": "powershell -NoProfile -ExecutionPolicy Bypass -File sitecore/scripts/down.ps1",
+    "sitecore:logs": "cd sitecore && docker compose logs -f cm"
   },
   "devDependencies": {
     "typescript": "^5.7.3"
