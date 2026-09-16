@@ -13,8 +13,8 @@ most of it image pulls.
 
 ## Step 1 — SitecoreAI in Docker
 
-The container stack lives in this repo under `sitecore/`. Addresses and troubleshooting
-are in the README's [Running SitecoreAI locally](../README.md#running-sitecoreai-locally).
+The container stack lives in this repo under `sitecore/`. Addresses are in the README's
+[Running SitecoreAI locally](../README.md#running-sitecoreai-locally).
 
 ### 1.1 Prerequisites
 

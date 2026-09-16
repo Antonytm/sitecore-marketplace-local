@@ -174,17 +174,6 @@ Read the probe by status class: `404` means absent, `401`/`403` present but unau
 `200`/`400` present. Update `verified` and `status` in `slm/src/protocol/routes.ts` from
 the results.
 
-### Troubleshooting
-
-| Symptom | Fix |
-|---|---|
-| `open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified` | The Docker CLI is on the Linux engine. `docker context use desktop-windows`, and make sure Docker Desktop is in Windows containers mode. `up.ps1` checks this before doing anything. |
-| `ERR_CONNECTION_REFUSED` on `xmcloudcm.localhost` | Nothing is listening on 443 — the stack is not running. Check `docker ps` and `pnpm sitecore:logs`. |
-| `up.ps1` stops with *port 443 is already in use* | Another stack is up, typically another starter clone. Run `docker compose down` in that stack's compose folder. |
-| `xmc.authoring` returns `401` after it worked | The token expired. `dotnet sitecore cloud login` from `sitecore/`, then restart `pnpm dev`. |
-| `xmc.authoring` returns `502` "does the CM allow…" | CORS. Check `LocalMarketplace.CORS.config` reached the CM (see Caveats). |
-| Certificate warning in the browser | `mkcert -install` did not run elevated. Re-run `init.ps1` from an elevated shell. |
-
 Environment variables, read by `pnpm dev` and `pnpm probe:endpoints`:
 
 | Variable | Default | Purpose |
