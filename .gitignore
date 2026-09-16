@@ -7,6 +7,9 @@ dist/
 .DS_Store
 *.tsbuildinfo
 .secrets/
-# Sitecore CLI writes a bearer token here; the gateway reads it but it must
+# Sitecore CLI writes a bearer token here; the host's dev server reads it but it must
 # never be committed.
 .sitecore/user.json
+# Sitecore CLI plugin cache, and the mkcert binary init.ps1 downloads.
+.sitecore/package-cache/
+local-containers/docker/traefik/certs/mkcert.exe

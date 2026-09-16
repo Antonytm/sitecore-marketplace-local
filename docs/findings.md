@@ -133,7 +133,7 @@ the same path** (`client-content/sdk.gen.ts`). The only discriminator is the `si
 query parameter, which the real host resolves to a live or preview Edge environment.
 
 Locally there is no Experience Edge and no CM→CD publish pipeline, so both collapse onto the
-CM preview endpoint. **Content will read as published when it is not.** The gateway logs a
+CM preview endpoint. **Content will read as published when it is not.** The host logs a
 warning when the live context ID is requested. Never validate publishing behaviour here.
 
 ### The open question
@@ -168,7 +168,7 @@ The approaches are complementary, not alternatives:
 
 ## 6. Cost summary
 
-**Cheap:** the host shell, the protocol surface, the origin bypass, the path-rewrite gateway.
+**Cheap:** the host shell, the protocol surface, the origin bypass, the path rewrite.
 All of it is in this repo and runs today against fixtures, with no Docker.
 
 **Moderate:** standing up the Windows-container XM Cloud stack, and trusting its self-signed dev
@@ -179,7 +179,7 @@ auth to Auth0 at `auth.sitecorecloud.io` (`SITECORE_FedAuth_dot_Auth0_dot_*` in 
 `.env`), so a **cloud-issued token is accepted by the local instance**. `up.ps1` already does
 the work — `dotnet sitecore cloud login` followed by `dotnet sitecore connect --cm
 https://xmcloudcm.localhost --allow-write true` — leaving a usable token in `.sitecore/user.json`
-that the gateway picks up automatically.
+that the host's dev server picks up automatically.
 
 **Not worth attempting:** reproducing Search, the AI agent APIs, Experience Edge, or the
 Marketplace registry. Stub them and let apps fail with a clean 501.

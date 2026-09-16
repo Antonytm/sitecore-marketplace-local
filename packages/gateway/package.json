@@ -4,8 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --experimental-strip-types src/server.ts",
-    "start": "node --experimental-strip-types src/server.ts",
     "probe": "node --experimental-strip-types src/probe.ts",
     "typecheck": "tsc --noEmit"
   },

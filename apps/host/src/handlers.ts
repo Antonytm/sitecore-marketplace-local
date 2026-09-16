@@ -9,7 +9,7 @@ import {
   type GenericRequestData,
   type LocalAppRecord,
 } from '@sml/protocol';
-import { forwardToGateway } from './gateway-client';
+import { requestCm } from './cm-client';
 import type { RequestHandler } from './host-bridge';
 
 /**
@@ -23,16 +23,19 @@ export interface HostContextState {
   route: string;
   pagesContext: unknown;
   siteContext: unknown;
+  /** The value of the field a custom-field app is editing. */
+  fieldValue: unknown;
 }
 
 export interface HandlerDeps {
   getState: () => HostContextState;
   setPagesContext: (next: unknown) => void;
+  setFieldValue: (next: unknown) => void;
   onNote: (message: string) => void;
 }
 
 export function buildHandlers(deps: HandlerDeps): Record<string, RequestHandler> {
-  const { getState, setPagesContext, onNote } = deps;
+  const { getState, setPagesContext, setFieldValue, onNote } = deps;
 
   return {
     [QUERY_ACTIONS.applicationContext]: () => {
@@ -62,9 +65,22 @@ export function buildHandlers(deps: HandlerDeps): Record<string, RequestHandler>
       onNote('pages.context updated by the app.');
     },
 
+    [DIRECT_ACTIONS.pagesGetValue]: () => getState().fieldValue,
+
+    [DIRECT_ACTIONS.pagesSetValue]: (payload: { value?: unknown; canvasReload?: boolean }) => {
+      setFieldValue(payload?.value);
+      onNote(`pages.setValue: ${JSON.stringify(payload?.value)?.slice(0, 200)}`);
+    },
+
+    [DIRECT_ACTIONS.pagesCloseApp]: () => {
+      // The real host closes the custom-field dialog. Locally the iframe stays,
+      // so the app can be inspected after it saves.
+      onNote('pages.closeApp called. The custom-field dialog would close here (no-op).');
+    },
+
     [DIRECT_ACTIONS.request]: async (payload: GenericRequestData) => {
-      const { response, route } = await forwardToGateway(payload);
-      if (route?.note) onNote(`${payload.path} -> ${route.note}`);
+      const { response, note } = await requestCm(payload);
+      if (note) onNote(`${payload.path} -> ${note}`);
       return response;
     },
 

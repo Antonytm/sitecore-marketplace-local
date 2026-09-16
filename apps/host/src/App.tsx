@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   EXTENSION_POINTS,
-  HOST_EVENTS,
   buildPagesContext,
   buildSiteContext,
   type ExtensionPoint,
@@ -12,7 +11,6 @@ import rawConfig from '../../../config/local-apps.json';
 import { HostSession, type LogEntry } from './host-bridge';
 import { buildHandlers, type HostContextState } from './handlers';
 import { Inspector } from './components/Inspector';
-import { EventControls } from './components/EventControls';
 
 const config = rawConfig as LocalAppsConfig;
 
@@ -22,6 +20,7 @@ export function App() {
   const [log, setLog] = useState<LogEntry[]>([]);
   const [connected, setConnected] = useState(false);
   const [pagesContext, setPagesContext] = useState<unknown>(() => buildPagesContext());
+  const [fieldValue, setFieldValue] = useState<unknown>('');
 
   const frameRef = useRef<HTMLIFrameElement>(null);
   const sessionRef = useRef<HostSession | null>(null);
@@ -35,6 +34,7 @@ export function App() {
     route: app.routes[extensionPoint] ?? '/',
     pagesContext,
     siteContext: buildSiteContext(),
+    fieldValue,
   });
 
   useEffect(() => {
@@ -44,8 +44,9 @@ export function App() {
       route: app.routes[extensionPoint] ?? '/',
       pagesContext,
       siteContext: stateRef.current.siteContext,
+      fieldValue,
     };
-  }, [app, extensionPoint, pagesContext]);
+  }, [app, extensionPoint, pagesContext, fieldValue]);
 
   const append = useCallback((entry: Omit<LogEntry, 'seq' | 'at'>) => {
     seqRef.current += 1;
@@ -77,6 +78,7 @@ export function App() {
       handlers: buildHandlers({
         getState: () => stateRef.current,
         setPagesContext,
+        setFieldValue,
         onNote: note,
       }),
       onLog: append,
@@ -102,20 +104,6 @@ export function App() {
     const frame = frameRef.current?.contentWindow;
     if (frame && sessionRef.current) sessionRef.current.attach(frame);
   }, []);
-
-  const emit = useCallback((event: string, payload: unknown) => {
-    try {
-      sessionRef.current?.emit(event, payload);
-    } catch (err) {
-      append({
-        direction: 'out',
-        kind: 'note',
-        label: 'emit failed',
-        detail: err instanceof Error ? err.message : err,
-        ok: false,
-      });
-    }
-  }, [append]);
 
   const availablePoints = useMemo(
     () => EXTENSION_POINTS.filter((p) => app.routes[p]),
@@ -170,13 +158,11 @@ export function App() {
           </p>
         )}
 
-        <EventControls
-          extensionPoint={extensionPoint}
-          pagesContext={pagesContext}
-          onPagesContextChange={setPagesContext}
-          onEmit={emit}
-          events={HOST_EVENTS}
-        />
+        {extensionPoint === 'xmc:pages:customfield' && (
+          <p className="hint">
+            Field value: <code>{JSON.stringify(fieldValue)}</code>
+          </p>
+        )}
       </aside>
 
       <main className={`stage stage--${extensionPoint.replace(/[:.]/g, '-')}`}>

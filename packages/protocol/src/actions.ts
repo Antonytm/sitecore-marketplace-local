@@ -38,6 +38,10 @@ export const DIRECT_ACTIONS = {
   openProfile: 'host.openProfile',
   navigateToExternalUrl: 'host.navigateTo.externalUrl',
   setNavbarItems: 'host.setNavbarItems',
+  /** Custom-field dialog: `client.getValue()`, `setValue()` and `closeApp()`. */
+  pagesGetValue: 'pages.getValue',
+  pagesSetValue: 'pages.setValue',
+  pagesCloseApp: 'pages.closeApp',
 } as const;
 
 /**

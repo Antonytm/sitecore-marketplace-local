@@ -125,11 +125,6 @@ export class HostSession {
     void this.core.connect();
   }
 
-  /** Pushes an event to the app. Subscriptions listen on the bare key. */
-  emit(event: string, payload: unknown): void {
-    this.core.emit(event, payload);
-  }
-
   isConnected(): boolean {
     return this.core.isConnected();
   }

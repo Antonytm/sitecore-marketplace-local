@@ -49,7 +49,7 @@ body {
   margin-bottom: 4px;
 }
 
-select, textarea, button {
+select, button {
   width: 100%;
   font: inherit;
   font-size: 13px;
@@ -60,7 +60,6 @@ select, textarea, button {
   padding: 6px 8px;
 }
 
-textarea { font-family: ui-monospace, monospace; font-size: 11px; resize: vertical; }
 
 button { cursor: pointer; margin-bottom: 6px; }
 button:hover { border-color: var(--accent); }
@@ -80,11 +79,7 @@ button:hover { border-color: var(--accent); }
   line-height: 1.5;
   color: var(--muted);
 }
-.error { color: var(--err); }
 code { font-family: ui-monospace, monospace; color: var(--accent); }
-
-.events { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 12px; }
-.events h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 
 /* The stage frames the iframe roughly the way each real extension point does,
    so layout problems show up here rather than after deploying to Cloud Portal. */

@@ -1,6 +1,5 @@
 {
   "hostOrigin": "http://localhost:5173",
-  "gatewayUrl": "http://localhost:8787",
   "apps": [
     {
       "id": "local-starter-app",
@@ -12,6 +11,27 @@
         "xmc:pages:contextpanel": "/pages-contextpanel-extension",
         "xmc:pages:customfield": "/custom-field-extension",
         "xmc:dashboardblocks": "/dashboard-widget-extension"
+      }
+    },
+    {
+      "id": "local-sje",
+      "name": "Sitecore JavaScript Extensions",
+      "origin": "http://localhost:3002",
+      "routes": {
+        "standalone": "/",
+        "xmc:fullscreen": "/"
+      }
+    },
+    {
+      "id": "local-icon-picker",
+      "name": "Icon Picker",
+      "origin": "http://localhost:5174",
+      "routes": {
+        "standalone": "/",
+        "xmc:fullscreen": "/",
+        "xmc:pages:contextpanel": "/",
+        "xmc:pages:customfield": "/",
+        "xmc:dashboardblocks": "/"
       }
     },
     {

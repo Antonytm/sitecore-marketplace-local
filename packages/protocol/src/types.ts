@@ -27,8 +27,8 @@ export interface GenericResponseData {
 }
 
 /**
- * JSON-safe mirror of the above, for the hop between the browser host and the
- * Node gateway. ArrayBuffers do not survive JSON, so bodies are base64.
+ * JSON-safe mirror of the above, used by the Node endpoint probe
+ * (`pnpm probe:endpoints`). Bodies are base64.
  */
 export interface WireRequest {
   path: string;
@@ -66,7 +66,5 @@ export interface LocalAppRecord {
 export interface LocalAppsConfig {
   /** Origin the host shell itself is served from; apps must pass this as `origin`. */
   hostOrigin: string;
-  /** Base URL of the local gateway that fulfils `host.request`. */
-  gatewayUrl: string;
   apps: LocalAppRecord[];
 }

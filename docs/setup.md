@@ -13,6 +13,9 @@ most of it image pulls.
 
 ## Step 1 — SitecoreAI in Docker
 
+The container stack lives in this repo under `local-containers/`. Addresses and troubleshooting
+are in the README's [Running SitecoreAI locally](../README.md#running-sitecoreai-locally).
+
 ### 1.1 Prerequisites
 
 | | |
@@ -27,32 +30,28 @@ most of it image pulls.
 Hyper-V/containers Windows features must be on, and Docker must not be in Linux-container mode
 — the CM image is Windows-based and will fail to pull otherwise.
 
-### 1.2 Clone the foundation head
-
-```powershell
-git clone https://github.com/sitecorelabs/xmcloud-foundation-head
-cd xmcloud-foundation-head
-```
-
-### 1.3 Initialise
+### 1.2 Initialise
 
 **In an elevated PowerShell** — `init.ps1` writes Windows hosts-file entries and installs an
 mkcert root CA, both of which need administrator rights:
 
 ```powershell
-.\local-containers\scripts\init.ps1 -InitEnv -LicenseXmlPath "C:\path\to\license.xml" -AdminPassword "<choose one>"
+cd S:\source\sitecore-marketplace-local
+.\local-containers\scripts\init.ps1 -InitEnv -LicenseXmlPath "C:\license\license.xml" -AdminPassword "<choose one>"
 ```
 
-This generates `local-containers/.env`, issues certificates for `xmcloudcm.localhost`, and adds
-the hosts entries. You only run it once.
+This copies `local-containers/.env.example` to `local-containers/.env` (gitignored), fills in
+generated secrets, issues certificates for `xmcloudcm.localhost` and
+`*.xmc-starter-js.localhost`, and adds the hosts entries. You only run it once.
 
-### 1.4 Bring it up
+### 1.3 Bring it up
 
 ```powershell
-.\local-containers\scripts\up.ps1
+pnpm sitecore:up
 ```
 
-`up.ps1` builds and starts the containers, waits for Traefik to expose the CM, then does the
+`up.ps1` first checks that Docker is on the Windows engine and that port 443 is free. It then
+builds and starts the containers, waits for Traefik to expose the CM, and does the
 authentication and seeding for you:
 
 ```
@@ -67,27 +66,29 @@ A browser window opens for device authorisation — approve it.
 
 > **Note this, it matters for step 3:** the local CM federates authentication to Auth0 at
 > `auth.sitecorecloud.io`, so your *cloud* login produces a token the *local* instance accepts.
-> `up.ps1` leaves it in `xmcloud-foundation-head/.sitecore/user.json` under the `default`
-> endpoint, pointed at `https://xmcloudcm.localhost`.
+> `up.ps1` leaves it in this repo's `.sitecore/user.json` under the `default` endpoint, pointed
+> at `https://xmcloudcm.localhost`.
 
-### 1.5 Verify
+### 1.4 Verify
 
 <https://xmcloudcm.localhost/sitecore> should load and let you log in as `admin` with the
 password you chose.
 
 **Checkpoint:** you can browse the content tree in Content Editor.
 
+`pnpm sitecore:down` stops the stack. Content persists in `local-containers/docker/data/`.
+
 ---
 
 ## Step 2 — A Marketplace app running locally
 
-### 2.1 Start the local host and gateway
+### 2.1 Start the local host
 
 ```bash
 cd S:/source/sitecore-marketplace-local
 pnpm install
 pnpm test     # six protocol contracts, verified against the real SDK
-pnpm dev      # host :5173, gateway :8787
+pnpm dev      # host :5173
 ```
 
 `pnpm test` is worth the 10 seconds — it proves the origin bypass and the action-naming
@@ -147,26 +148,27 @@ look for `[client SDK] Invalid message origin`.
 
 ## Step 3 — The Authoring API
 
-### 3.1 Point the gateway at your token
+### 3.1 Check the host has your token
 
-The gateway reads `.sitecore/user.json`, but that file lives in the **foundation-head** repo,
-not this one. Tell it where:
+`pnpm sitecore:up` logs in from this repo, so the token lands in `.sitecore/user.json` at the
+repo root — the first place the host's dev server looks. Nothing to configure:
 
 ```bash
-SML_SITECORE_USER_JSON="C:/path/to/xmcloud-foundation-head/.sitecore/user.json" pnpm dev:gateway
+pnpm dev
 ```
 
-Or on Windows PowerShell:
+The startup banner should read `token yes (...\.sitecore\user.json [default])`. If it says
+`NONE`, `up.ps1` did not complete its login. From the repo root, re-run:
 
 ```powershell
-$env:SML_SITECORE_USER_JSON = "C:\path\to\xmcloud-foundation-head\.sitecore\user.json"
-pnpm dev:gateway
+dotnet sitecore cloud login
+dotnet sitecore connect --ref xmcloud --cm https://xmcloudcm.localhost --allow-write true -n default
 ```
 
-The startup banner should now read `token yes (...[default])`. If it says `NONE`, the path is
-wrong or `up.ps1` did not complete its login.
+To use a token from elsewhere, set `SML_SITECORE_USER_JSON` to that file, or `ACCESS_TOKEN`
+to a bearer token.
 
-The gateway picks the endpoint whose `host` matches your CM, so a `user.json` holding both a
+It picks the endpoint whose `host` matches your CM, so a `user.json` holding both a
 cloud and a local endpoint resolves to the local one.
 
 ### 3.2 Check what the CM actually serves
@@ -182,7 +184,7 @@ Read by status class, not pass/fail:
 | `200` / `400` | endpoint exists and is reachable |
 | `401` / `403` | exists, but the token was rejected — revisit 3.1 |
 | `404` | **absent** — no local equivalent, that namespace is a stub |
-| `502` | gateway could not connect — containers down |
+| `502` | probe could not connect — containers down |
 
 `xmc.authoring` is the row that matters for this step; it should come back **PRESENT**.
 
@@ -192,8 +194,9 @@ update `verified` and `status` in `packages/protocol/src/routes.ts` to match.
 
 ### 3.3 Call it from the app
 
-The Authoring API reaches the host as `host.request` on `/v1/authoring/graphql`, which the
-gateway rewrites to `https://xmcloudcm.localhost/sitecore/api/authoring/graphql/v1`.
+The Authoring API reaches the host as `host.request` on `/v1/authoring/graphql`. The host
+rewrites it to `https://xmcloudcm.localhost/sitecore/api/authoring/graphql/v1` and fetches it
+from the browser with the bearer token — the same thing Cloud Portal does.
 
 From any Marketplace app:
 
@@ -207,18 +210,12 @@ const response = await client.mutate('xmc.authoring.graphql', {
 explore the real schema in the IDE (3.4) and write queries against your content tree.
 
 Watch the host's message inspector while it runs: you will see `host.request` go out with the
-origin-stripped path, and the gateway console log the rewrite to the local CM.
+origin-stripped path, and the Network tab show the matching request to `xmcloudcm.localhost`.
 
 ### 3.4 Optional — the GraphQL IDE
 
-To browse the schema interactively, add to the `cm` service environment in
-`local-containers/docker-compose.override.yml`:
-
-```yaml
-      Sitecore_GraphQL_ExposePlayground: "true"
-```
-
-Restart the CM container, then open
+The stack sets `Sitecore_GraphQL_ExposePlayground: "true"` on the CM (see
+`local-containers/docker-compose.override.yml`), so the IDE is already on at
 <https://xmcloudcm.localhost/sitecore/api/authoring/graphql/ide/>.
 
 The IDE needs the token too — an API key will not do for the Authoring API. Add the
@@ -235,20 +232,23 @@ Content Editor.
 
 ## Notes
 
-**No CORS work is needed.** The gateway talks to the CM server-side from Node, so the CM's
-`SITECORE_GraphQL_CORS` setting is irrelevant to this setup. It also keeps the token out of the
-browser.
+**CORS.** The host calls the CM from the browser, so the CM must allow `http://localhost:5173`.
+`local-containers/docker/deploy/platform/App_Config/Include/zzz/LocalMarketplace.CORS.config`
+adds it to the Authoring GraphQL policy; the CM's dev entrypoint syncs `docker/deploy/platform`
+into the webroot, so no image rebuild is needed.
 
-**TLS.** The gateway accepts the container's self-signed certificate by default
-(`SML_INSECURE_TLS=1`), scoped to its own HTTPS agent rather than the whole process. Since
-`init.ps1` installed an mkcert root CA into the Windows trust store, you can tighten this:
+**The token is in the host page**, as in Cloud Portal. The app iframe is cross-origin and cannot
+read it. Only `pnpm dev` injects it; `vite build` does not.
+
+**TLS.** The browser trusts the mkcert certificate `init.ps1` installed. The Node probe accepts
+the self-signed certificate by default (`SML_INSECURE_TLS=1`); to tighten it:
 
 ```bash
-SML_INSECURE_TLS=0 NODE_OPTIONS=--use-system-ca pnpm dev:gateway
+SML_INSECURE_TLS=0 NODE_OPTIONS=--use-system-ca pnpm probe:endpoints
 ```
 
 **Tokens expire.** When `xmc.authoring` starts returning 401 after working, re-run
-`dotnet sitecore cloud login` in the foundation-head repo and restart the gateway.
+`dotnet sitecore cloud login` from this repo's root and restart `pnpm dev`.
 
 **Do not test publishing here.** `xmc.live` shares a path with `xmc.preview` and there is no
 local Experience Edge, so both resolve to the CM preview endpoint. Content reads as published
@@ -256,12 +256,11 @@ when it is not.
 
 **`xmc.search` and `xmc.agent` return 501.** No local equivalent exists.
 
-Gateway environment variables:
+Environment variables, read by `pnpm dev` and `pnpm probe:endpoints`:
 
 | Variable | Default | Purpose |
 |---|---|---|
 | `SML_LOCAL_CM` | `https://xmcloudcm.localhost` | Local CM base URL |
 | `SML_SITECORE_USER_JSON` | `./.sitecore/user.json` | Where to read the token from |
-| `SML_LOCAL_TOKEN` | — | Explicit token, overrides the file |
-| `SML_GATEWAY_PORT` | `8787` | |
-| `SML_INSECURE_TLS` | `1` | Accept the self-signed dev cert |
+| `ACCESS_TOKEN` | — | Explicit token, overrides the file |
+| `SML_INSECURE_TLS` | `1` | Probe only: accept the self-signed dev cert |

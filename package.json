@@ -4,15 +4,17 @@
   "private": true,
   "description": "A local Sitecore Marketplace host: run Marketplace apps against a local SitecoreAI/XM Cloud instance.",
   "scripts": {
-    "dev": "pnpm --parallel --filter \"./apps/host\" --filter \"./packages/gateway\" dev",
+    "dev": "pnpm --filter @sml/host dev",
     "dev:all": "pnpm --parallel -r dev",
     "dev:host": "pnpm --filter @sml/host dev",
     "dev:probe": "pnpm --filter @sml/probe dev",
-    "dev:gateway": "pnpm --filter @sml/gateway dev",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm --filter @sml/protocol test",
-    "probe:endpoints": "pnpm --filter @sml/gateway probe"
+    "probe:endpoints": "pnpm --filter @sml/gateway probe",
+    "sitecore:up": "powershell -NoProfile -ExecutionPolicy Bypass -File local-containers/scripts/up.ps1",
+    "sitecore:down": "powershell -NoProfile -ExecutionPolicy Bypass -File local-containers/scripts/down.ps1",
+    "sitecore:logs": "cd local-containers && docker compose logs -f cm"
   },
   "devDependencies": {
     "typescript": "^5.7.3"

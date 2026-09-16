@@ -15,7 +15,7 @@
  *   client-search           https://example.com/search
  *
  * In the real product an Envoy gateway resolves these against the tenant. Here
- * the gateway resolves them against `https://xmcloudcm.localhost`.
+ * the host resolves them against `https://xmcloudcm.localhost`.
  *
  * `verified: false` means the local target is an educated guess that has NOT
  * been confirmed against a running container. Run `pnpm --filter @sml/gateway
@@ -65,7 +65,7 @@ export function buildRouteTable(cm: string = DEFAULT_LOCAL_CM): RouteRule[] {
         'environment. Locally there is no Experience Edge and no publish ' +
         'pipeline, so both resolve to the CM preview endpoint. Content therefore ' +
         'reads as published when it is not: never test publishing behaviour here. ' +
-        'The gateway logs a warning when the live context ID is requested.',
+        'The host logs a warning when the live context ID is requested.',
     },
     {
       namespaces: ['xmc.xmapp', 'xmc.sites', 'xmc.pages'],

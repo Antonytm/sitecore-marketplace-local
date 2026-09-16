@@ -1,9 +1,9 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export interface GatewayConfig {
-  port: number;
   /** Base URL of the local CM container. */
   cm: string;
   /** Bearer token forwarded on `requiresAuth` requests. */
@@ -22,19 +22,19 @@ interface CliEndpoint {
 /**
  * Resolves a token for the local CM.
  *
- * The XM Cloud foundation-head containers federate authentication to Auth0 at
- * `auth.sitecorecloud.io` (see `SITECORE_FedAuth_dot_Auth0_dot_*` in the stack's
- * .env), so a cloud-issued token IS accepted by the local instance. That is
- * exactly what `up.ps1` sets up when it runs:
+ * The container stack in `local-containers/` federates authentication to Auth0 at
+ * `auth.sitecorecloud.io` (see `SITECORE_FedAuth_dot_Auth0_dot_*` in its .env),
+ * so a cloud-issued token IS accepted by the local instance. That is exactly what
+ * `local-containers/scripts/up.ps1` sets up when it runs:
  *
  *   dotnet sitecore cloud login
  *   dotnet sitecore connect --ref xmcloud --cm https://xmcloudcm.localhost --allow-write true -n default
  *
- * which writes an endpoint into `.sitecore/user.json` pointing at the local CM.
+ * which writes an endpoint into this repo's `.sitecore/user.json` pointing at the local CM.
  * So in the normal case there is nothing to do here beyond reading that file.
  *
  * Order of preference:
- *   1. SML_LOCAL_TOKEN                  explicit override
+ *   1. ACCESS_TOKEN                     explicit override
  *   2. the user.json endpoint whose host matches our CM
  *   3. the endpoint named by `defaultEndpoint`
  *   4. none - requests go out unauthenticated and the CM will 401
@@ -61,12 +61,15 @@ function pickEndpoint(
 }
 
 function resolveToken(cm: string): { token: string | null; source: string } {
-  if (process.env.SML_LOCAL_TOKEN) {
-    return { token: process.env.SML_LOCAL_TOKEN, source: 'SML_LOCAL_TOKEN' };
+  if (process.env.ACCESS_TOKEN) {
+    return { token: process.env.ACCESS_TOKEN, source: 'ACCESS_TOKEN' };
   }
 
   const candidates = [
     process.env.SML_SITECORE_USER_JSON,
+    // Repo root, where up.ps1 runs the Sitecore CLI. pnpm runs this package with
+    // cwd = packages/gateway, so the cwd candidate below never reaches it.
+    fileURLToPath(new URL('../../../.sitecore/user.json', import.meta.url)),
     join(process.cwd(), '.sitecore', 'user.json'),
     join(homedir(), '.sitecore', 'user.json'),
   ].filter(Boolean) as string[];
@@ -96,7 +99,6 @@ export function loadConfig(): GatewayConfig {
   const cm = process.env.SML_LOCAL_CM ?? 'https://xmcloudcm.localhost';
   const { token, source } = resolveToken(cm);
   return {
-    port: Number(process.env.SML_GATEWAY_PORT ?? 8787),
     cm,
     token,
     tokenSource: source,
