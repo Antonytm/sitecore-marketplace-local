@@ -210,9 +210,9 @@ Read by status class, not pass/fail:
 The probe runs under Node rather than in the browser, which is why it can tell a stopped
 container from a CORS rejection — the browser cannot.
 
-The `xmc.xmapp` / `sites` / `pages` rows answer the one open question in
-[`findings.md`](findings.md) — whether the local CM serves the XM Apps API. Whatever they say,
-update `verified` and `status` in `slm/src/protocol/routes.ts` to match.
+The `xmc.xmapp` / `sites` / `pages` rows come back `404`: the local API does not serve the XM
+Apps endpoints, so those namespaces are stubs and refuse with a clean `501`. If that ever
+changes, update `verified` and `status` in `slm/src/protocol/routes.ts` to match.
 
 ### 3.3 Call it from the app
 

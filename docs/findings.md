@@ -118,7 +118,7 @@ The route table lives in `slm/src/protocol/routes.ts`.
 | `xmc.authoring` | `/v1/authoring/graphql` | `/sitecore/api/authoring/graphql/v1` | ✅ **works** — the main authoring surface |
 | `xmc.preview` | `/content/api/graphql/v1` | `/sitecore/api/graph/edge` | ✅ works; schema close but not identical to Edge |
 | `xmc.live` | *same path as preview* | same | ⚠️ **degraded** — see below |
-| `xmc.xmapp` / `sites` / `pages` | `/authoring/api/v1/...` | `/api/v1/...` on CM | ❌ **absent** — probed, `404`. See below |
+| `xmc.xmapp` / `sites` / `pages` | `/authoring/api/v1/...` | `/api/v1/...` on CM | ❌ **absent** — the local API does not serve these; probed, `404` |
 | `xmc.contentTransfer` | `/authoring/transfer/...` | — | ❌ absent — probed, `404`; targets cloud environments anyway |
 | `xmc.search` | `/search/...` | none | ❌ separate SaaS product |
 | `xmc.agent`, `@sitecore-marketplace-sdk/ai` | `/stream/ai-agent-api/...` | none | ❌ cloud-only |
@@ -135,22 +135,6 @@ query parameter, which the real host resolves to a live or preview Edge environm
 Locally there is no Experience Edge and no CM→CD publish pipeline, so both collapse onto the
 CM preview endpoint. **Content will read as published when it is not.** The host logs a
 warning when the live context ID is requested. Never validate publishing behaviour here.
-
-### The open question, now answered
-
-Whether the local CM container serves the XM Apps API (`/api/v1/sites`, `/pages`,
-`/collections`, `/languages`) decided whether three namespaces work or become stubs. There was
-reason to expect it would: Sitecore's supported "Pages connected to a local XM instance" mode
-has cloud Pages calling exactly these endpoints against the local CM.
-
-**It does not.** `pnpm probe:endpoints` against a running stack returns `404` for all of
-`/authoring/api/v1/languages`, `/collections` and `/pages/search`, and for
-`/authoring/transfer`. Not `401` — genuinely absent, not merely unauthorised, and the same run
-got `200` from the authoring and preview GraphQL endpoints with the same token, so this is not
-an auth artefact.
-
-So `xmc.xmapp`, `xmc.sites`, `xmc.pages` and `xmc.contentTransfer` are stubs locally. Whatever
-serves those routes in Pages' local-XM mode, it is not the CM container on these paths.
 
 ## 5. What about Sitecore's own supported route?
 
