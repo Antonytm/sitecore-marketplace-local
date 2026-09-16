@@ -80,7 +80,7 @@ return this.coreSdk.request('host.request', { path, method, headers, body, requi
 
 Every generated `xmc` client uses a dummy `https://example.com/...` base URL for exactly this
 reason. The **host** decides which backend a call lands on and attaches the token. Redirecting
-all XM Cloud API traffic at a local CM is therefore one request handler plus a path-rewrite
+all SitecoreAI (XM Cloud) API traffic at a local CM is therefore one request handler plus a path-rewrite
 table — not an interception hack.
 
 ## 3. The complete host protocol
@@ -150,7 +150,7 @@ confusing than either pure setup.
 
 The approaches are complementary, not alternatives:
 
-| | App code | Page context | XM Cloud data | Registry |
+| | App code | Page context | SitecoreAI (XM Cloud) data | Registry |
 |---|---|---|---|---|
 | Documented "local development" | local | cloud | cloud | cloud |
 | Pages → local XM | cloud | **local** | cloud | cloud |

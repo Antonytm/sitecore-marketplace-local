@@ -43,7 +43,7 @@ export function buildApplicationContext(
     resourceId: LOCAL_IDS.resourceId,
     tenantId: LOCAL_IDS.tenantId,
     tenantName: LOCAL_IDS.tenantName,
-    tenantDisplayName: 'Local XM Cloud (Docker)',
+    tenantDisplayName: 'Local SitecoreAI (XM Cloud), Docker',
     context: {
       live: LOCAL_IDS.liveContextId,
       preview: LOCAL_IDS.previewContextId,

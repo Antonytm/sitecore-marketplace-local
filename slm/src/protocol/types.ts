@@ -7,7 +7,7 @@ import type { ExtensionPoint } from './actions.ts';
  * url.hash` and discards the host. The generated xmc clients all use a dummy
  * `https://example.com/...` baseUrl for exactly this reason, so the *host*
  * decides which backend a call lands on. That is the hook this project uses to
- * redirect every XM Cloud API call at a local instance.
+ * redirect every SitecoreAI (XM Cloud) API call at a local instance.
  */
 export interface GenericRequestData {
   contextId?: string;

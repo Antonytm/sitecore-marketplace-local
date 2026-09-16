@@ -24,7 +24,7 @@ $ownTraefik = docker ps -q --filter "label=com.docker.compose.project=$projectNa
 $port443 = Get-NetTCPConnection -State Listen -LocalPort 443 -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($port443 -and -not $ownTraefik) {
     $owner = (Get-Process -Id $port443.OwningProcess -ErrorAction SilentlyContinue).ProcessName
-    throw "Port 443 is already in use (by '$owner'). Another container stack, e.g. another XM Cloud starter clone, is probably running - stop it with 'docker compose down' in that stack's compose folder."
+    throw "Port 443 is already in use (by '$owner'). Another container stack, e.g. another SitecoreAI (XM Cloud) starter clone, is probably running - stop it with 'docker compose down' in that stack's compose folder."
 }
 
 . $SitecoreRoot\scripts\upFunctions.ps1
@@ -63,10 +63,10 @@ if (-not $envCheck) {
     throw "$envCheckVariable does not have a value. Did you run 'init.ps1 -InitEnv'?"
 }
 
-Write-Host "Keeping XM Cloud base image up to date" -ForegroundColor Green
+Write-Host "Keeping SitecoreAI (XM Cloud) base image up to date" -ForegroundColor Green
 docker pull "$($sitecoreDockerRegistry)sitecore-xmcloud-cm:$($sitecoreVersion)"
 
-Write-Host "Keeping XM Cloud Tools image up to date" -ForegroundColor Green
+Write-Host "Keeping SitecoreAI (XM Cloud) Tools image up to date" -ForegroundColor Green
 docker pull "$($xmcloudDockerToolsImage):$($sitecoreVersion)"
 
 # Moving into the compose project folder
