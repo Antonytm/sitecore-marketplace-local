@@ -113,8 +113,8 @@ The `routes` keys are the SDK's extension points: `standalone`, `xmc:fullscreen`
 ## Running SitecoreAI locally
 
 `sitecore/` holds the container stack from Sitecore's
-[xmcloud-starter-js](https://github.com/Sitecore/xmcloud-starter-js) (Apache-2.0, see
-`sitecore/THIRD-PARTY.md`): CM, SQL Server, Solr, Traefik and a Next.js rendering host.
+[xmcloud-starter-js](https://github.com/Sitecore/xmcloud-starter-js): CM, SQL Server, Solr,
+Traefik and a Next.js rendering host.
 
 ### Prerequisites
 
