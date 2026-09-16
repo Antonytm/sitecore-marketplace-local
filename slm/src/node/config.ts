@@ -34,7 +34,7 @@ interface CliEndpoint {
  * So in the normal case there is nothing to do here beyond reading that file.
  *
  * Order of preference:
- *   1. ACCESS_TOKEN                     explicit override
+ *   1. SML_ACCESS_TOKEN                 explicit override
  *   2. the user.json endpoint whose host matches our CM
  *   3. the endpoint named by `defaultEndpoint`
  *   4. none - requests go out unauthenticated and the CM will 401
@@ -61,8 +61,8 @@ function pickEndpoint(
 }
 
 function resolveToken(cm: string): { token: string | null; source: string } {
-  if (process.env.ACCESS_TOKEN) {
-    return { token: process.env.ACCESS_TOKEN, source: 'ACCESS_TOKEN' };
+  if (process.env.SML_ACCESS_TOKEN) {
+    return { token: process.env.SML_ACCESS_TOKEN, source: 'SML_ACCESS_TOKEN' };
   }
 
   const candidates = [

@@ -179,7 +179,7 @@ Environment variables, read by `pnpm dev` and `pnpm probe:endpoints`:
 | Variable | Default | Purpose |
 |---|---|---|
 | `SML_LOCAL_CM` | `https://xmcloudcm.localhost` | Local CM base URL |
-| `ACCESS_TOKEN` | — | Bearer token for authenticated calls, overrides any `user.json` |
+| `SML_ACCESS_TOKEN` | — | Bearer token for authenticated calls, overrides any `user.json` |
 | `SML_SITECORE_USER_JSON` | `<repo>/sitecore/.sitecore/user.json` | Where to read a token from instead |
 | `SML_INSECURE_TLS` | `1` | Probe only: accept the container's self-signed dev cert |
 

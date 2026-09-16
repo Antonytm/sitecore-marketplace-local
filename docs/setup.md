@@ -184,7 +184,7 @@ dotnet sitecore cloud login
 dotnet sitecore connect --ref xmcloud --cm https://xmcloudcm.localhost --allow-write true -n default
 ```
 
-To use a token from elsewhere, set `SML_SITECORE_USER_JSON` to that file, or `ACCESS_TOKEN`
+To use a token from elsewhere, set `SML_SITECORE_USER_JSON` to that file, or `SML_ACCESS_TOKEN`
 to a bearer token.
 
 It picks the endpoint whose `host` matches your CM, so a `user.json` holding both a
@@ -285,5 +285,5 @@ Environment variables, read by `pnpm dev` and `pnpm probe:endpoints`:
 |---|---|---|
 | `SML_LOCAL_CM` | `https://xmcloudcm.localhost` | Local CM base URL |
 | `SML_SITECORE_USER_JSON` | `./sitecore/.sitecore/user.json` | Where to read the token from |
-| `ACCESS_TOKEN` | — | Explicit token, overrides the file |
+| `SML_ACCESS_TOKEN` | — | Explicit token, overrides the file |
 | `SML_INSECURE_TLS` | `1` | Probe only: accept the self-signed dev cert |
